@@ -204,14 +204,14 @@ async function verificarRedacao() {
     const elementoRedacao = document.querySelector("p.MuiTypography-root.MuiTypography-body1.css-m576f2");
     if (elementoRedacao && elementoRedacao.textContent.includes("Redação")) {
         try {
-            await mostrarNotificacaoSinc('info', 'Script Iniciado!', 'Bem-Vindo ao melhor script para Redação Paulista', 5000);
+            await mostrarNotificacaoSinc('info', 'Script Iniciado!', 'AMWARE redação maker', 5000);
             const coletaneaHTML = document.querySelector(".ql-editor").innerHTML;
             const enunciado = document.querySelector(".ql-align-justify").innerText;
             const generoTextual = document.querySelector(".css-1pvvm3t").innerText;
             const criteriosAvaliacao = document.querySelector(".css-1pvvm3t").innerText;
             const dadosRedacao = { coletanea: coletaneaHTML, enunciado, generoTextual, criteriosAvaliacao };
             const promptGeracaoAleatorio = promptsGeracao[Math.floor(Math.random() * promptsGeracao.length)].replace('{dadosRedacao}', JSON.stringify(dadosRedacao));
-            await mostrarNotificacaoSinc('aviso', 'Gerando Redação', 'O processo de geração foi iniciado. Pode levar alguns segundos...', 5000);
+            await mostrarNotificacaoSinc('aviso', 'Gerando Redação', 'A redação pode demorar um pouco para ficar pronto.', 5000);
             const respostaRedacao = await obterRespostaIA(promptGeracaoAleatorio);
             if (!respostaRedacao.includes("TITULO:") || !respostaRedacao.includes("TEXTO:")) return;
             const tituloRedacao = respostaRedacao.split("TITULO:")[1].split("TEXTO:")[0].trim();
