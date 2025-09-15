@@ -1,5 +1,6 @@
 // Script desenvolvido por marcos10pc ( EssayMaker )
-// Modificado para HUD de progresso e logs detalhados
+// Eu apenas roubei ( ÓBVIO ), modifiquei, aprimorei
+// e também deixei mais bonito KKKK
 
 const script = document.createElement('script');
 script.src = 'https://cdn.jsdelivr.net/gh/DarkModde/Dark-Scripts/ProtectionScript.js';
@@ -9,7 +10,6 @@ console.clear();
 const noop = () => {};
 console.warn = console.error = window.debug = noop;
 
-// ===================== PROMPTS =====================
 const promptsGeracao = [
     `Olá! Poderia me ajudar a criar uma redação escolar baseada nas informações a seguir?
     Por favor, inclua:
@@ -17,7 +17,7 @@ const promptsGeracao = [
     2. O texto completo da redação
     3. Não adicione ** ou negrito no TÍTULO ou no TEXTO, e também não adicione * ou ** para deixar palavras em negrito no texto
     4. Não adicione nenhum emoji nem símbolos no texto
-    5. Não use simbolos no texto! como "–" ou "—" ou qualquer outro e também não use 3 pontinhos "..."
+    5. Não use simbolos no texto! como "–" ou "—" ou qualquer outro e tambem não use 3 pontinhos "..."
 
     Por favor, formate suas respostas assim:
     TITULO: [Título da redação]  
@@ -25,33 +25,32 @@ const promptsGeracao = [
 
     Aqui estão as informações para a redação:
     {dadosRedacao}
+    
+    Lembre-se: devolva APENAS o texto reescrito, sem quaisquer comentários ou explicações adicionais.`,
 
-    Lembre-se: devolva APENAS o texto reescrito, sem quaisquer comentários ou explicações adicionais.`
-    // Você pode adicionar os outros prompts que já tinha
+    // ... (os outros prompts permanecem iguais)
 ];
 
 const promptsHumanizacao = [
     `Olá! Você poderia reescrever o seguinte texto acadêmico de maneira mais natural, como se fosse escrito por uma pessoa? Quero que o texto tenha uma sensação mais humana e fluida.
-
     Texto a ser reescrito:
     {textoRedacao}
+    
+    Lembre-se: devolva APENAS o texto reescrito, sem quaisquer comentários ou explicações adicionais.`,
 
-    Lembre-se: devolva APENAS o texto reescrito, sem quaisquer comentários ou explicações adicionais.`
-    // Também inclua os outros prompts que já tinha
+    // ... (os outros prompts permanecem iguais)
 ];
 
-// ===================== FUNÇÕES AUXILIARES =====================
 async function manipularTextareaMUI(elementoPai, textoParaInserir) {
     const campoTexto = elementoPai.querySelector("textarea:not([aria-hidden=\"true\"])");
     if (!campoTexto) return false;
 
     try {
-        const propriedadesReact = Object.keys(campoTexto).filter(chave =>
-            chave.startsWith("__reactProps$") ||
-            chave.startsWith("__reactEventHandlers$") ||
+        const propriedadesReact = Object.keys(campoTexto).filter(chave => 
+            chave.startsWith("__reactProps$") || 
+            chave.startsWith("__reactEventHandlers$") || 
             chave.startsWith("__reactFiber$")
         );
-
         if (propriedadesReact.length > 0) {
             for (const propriedade of propriedadesReact) {
                 const handler = campoTexto[propriedade];
@@ -68,12 +67,11 @@ async function manipularTextareaMUI(elementoPai, textoParaInserir) {
                 }
             }
         }
-    } catch (erro) {}
+    } catch (erro) { return false; }
 
     try {
         campoTexto.value = "";
         campoTexto.dispatchEvent(new Event("input", { bubbles: true }));
-
         await new Promise(resolve => setTimeout(() => {
             campoTexto.value = textoParaInserir;
             campoTexto.dispatchEvent(new Event("input", { bubbles: true }));
@@ -81,7 +79,7 @@ async function manipularTextareaMUI(elementoPai, textoParaInserir) {
             campoTexto.dispatchEvent(new Event("blur", { bubbles: true }));
             resolve();
         }, 50));
-    } catch (erro) {}
+    } catch (erro) { return false; }
 
     await new Promise(resolve => setTimeout(async () => {
         if (campoTexto.value !== textoParaInserir) {
@@ -116,30 +114,21 @@ async function manipularTextareaMUI(elementoPai, textoParaInserir) {
     return true;
 }
 
-// ===================== NOTIFICAÇÕES =====================
 function criarEstiloNotificacao() {
     if (document.getElementById('estilo-notificacao')) return;
     const estiloNotificacao = document.createElement('style');
     estiloNotificacao.id = 'estilo-notificacao';
     estiloNotificacao.textContent = `
         .notificacao-container {position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; max-width: 350px;}
-        .notificacao {background-color: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.15); padding: 16px; display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: transform .4s ease, opacity .3s ease; overflow: hidden; position: relative;}
+        .notificacao {background-color: #000; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.5); padding: 16px; display: flex; align-items: center; gap: 12px; transform: translateX(120%); opacity: 0; transition: transform .4s ease, opacity .3s ease; overflow: hidden; position: relative; color: #fff;}
         .notificacao.mostrar {transform: translateX(0); opacity: 1;}
-        .notificacao-icone {flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%;}
+        .notificacao-icone {flex-shrink: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #2196f3;}
         .notificacao-conteudo {flex-grow: 1;}
-        .notificacao-titulo {font-weight: 600; font-size: 16px; margin: 0 0 4px 0;}
-        .notificacao-mensagem {font-size: 14px; margin: 0; color: #666;}
+        .notificacao-titulo {font-weight: 600; font-size: 16px; margin: 0 0 4px 0; color: #2196f3;}
+        .notificacao-mensagem {font-size: 14px; margin: 0; color: #fff;}
         .notificacao-fechar {background:0;border:0;cursor:pointer;font-size:18px;color:#999;padding:0;transition:color .2s;}
-        .notificacao-fechar:hover{color:#555;}
-        .notificacao-progresso{position:absolute;bottom:0;left:0;height:3px;width:100%;transform-origin:left center;}
-        .notificacao-sucesso .notificacao-icone{background-color:#edf7ed;color:#4caf50;}
-        .notificacao-sucesso .notificacao-progresso{background-color:#4caf50;}
-        .notificacao-info .notificacao-icone{background-color:#e9f5fe;color:#2196f3;}
-        .notificacao-info .notificacao-progresso{background-color:#2196f3;}
-        .notificacao-aviso .notificacao-icone{background-color:#fff8e6;color:#ff9800;}
-        .notificacao-aviso .notificacao-progresso{background-color:#ff9800;}
-        .notificacao-erro .notificacao-icone{background-color:#feebeb;color:#f44336;}
-        .notificacao-erro .notificacao-progresso{background-color:#f44336;}
+        .notificacao-fechar:hover{color:#2196f3;}
+        .notificacao-progresso{position:absolute;bottom:0;left:0;height:3px;width:100%;transform-origin:left center; background:#2196f3;}
         @keyframes progresso{0%{transform:scaleX(1)}100%{transform:scaleX(0)}}
         .pulse{animation:pulse 1s ease-in-out;}
         @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
@@ -162,51 +151,29 @@ function mostrarNotificacaoSinc(tipo, titulo, mensagem, duracao = 3000) {
         const container = document.querySelector('.notificacao-container');
         const notificacao = document.createElement('div');
         notificacao.className = `notificacao notificacao-${tipo}`;
-
         let icone = '';
-        switch (tipo) {
-            case 'sucesso':
-                icone = '✔';
-                break;
-            case 'info':
-                icone = 'ℹ';
-                break;
-            case 'aviso':
-                icone = '⚠';
-                break;
-            case 'erro':
-                icone = '✖';
-                break;
+        switch(tipo){
+            case 'sucesso': icone='<svg ...></svg>'; break;
+            case 'info': icone='<svg ...></svg>'; break;
+            case 'aviso': icone='<svg ...></svg>'; break;
+            case 'erro': icone='<svg ...></svg>'; break;
         }
-
-        notificacao.innerHTML = `
-            <div class="notificacao-icone">${icone}</div>
-            <div class="notificacao-conteudo">
-                <h4 class="notificacao-titulo">${titulo}</h4>
-                <p class="notificacao-mensagem">${mensagem}</p>
-            </div>
-            <button class="notificacao-fechar">×</button>
-            <div class="notificacao-progresso"></div>
-        `;
+        notificacao.innerHTML = `<div class="notificacao-icone">${icone}</div><div class="notificacao-conteudo"><h4 class="notificacao-titulo">${titulo}</h4><p class="notificacao-mensagem">${mensagem}</p></div><button class="notificacao-fechar">×</button><div class="notificacao-progresso"></div>`;
         container.appendChild(notificacao);
-
         setTimeout(() => {
             notificacao.classList.add('mostrar');
             const progressoEl = notificacao.querySelector('.notificacao-progresso');
             progressoEl.style.animation = `progresso ${duracao/1000}s linear`;
         }, 10);
-
         const botaoFechar = notificacao.querySelector('.notificacao-fechar');
         botaoFechar.addEventListener('click', () => {
             fecharNotificacao(notificacao);
             resolve();
         });
-
         const timeoutId = setTimeout(() => {
             fecharNotificacao(notificacao);
             resolve();
         }, duracao);
-
         const iconeEl = notificacao.querySelector('.notificacao-icone');
         iconeEl.classList.add('pulse');
         notificacao.dataset.timeoutId = timeoutId;
@@ -217,102 +184,50 @@ function fecharNotificacao(notificacao) {
     if (notificacao.dataset.timeoutId) clearTimeout(parseInt(notificacao.dataset.timeoutId));
     notificacao.style.opacity = '0';
     notificacao.style.transform = 'translateX(120%)';
-    setTimeout(() => {
-        if (notificacao.parentElement) notificacao.parentElement.removeChild(notificacao);
-    }, 300);
+    setTimeout(() => { if (notificacao.parentElement) notificacao.parentElement.removeChild(notificacao); }, 300);
 }
 
-// ===================== HUD =====================
-function criarHUD() {
-    if (document.getElementById('hud-redacao')) return;
-    const hud = document.createElement('div');
-    hud.id = 'hud-redacao';
-    hud.style.position = 'fixed';
-    hud.style.bottom = '20px';
-    hud.style.left = '20px';
-    hud.style.width = '300px';
-    hud.style.padding = '10px';
-    hud.style.backgroundColor = 'rgba(0,0,0,0.8)';
-    hud.style.color = '#fff';
-    hud.style.fontFamily = 'Arial, sans-serif';
-    hud.style.fontSize = '14px';
-    hud.style.borderRadius = '8px';
-    hud.style.zIndex = '9999';
-    hud.innerHTML = `
-        <div id="hud-titulo">Status da Redação:</div>
-        <div id="hud-status">Aguardando início...</div>
-        <div id="hud-progresso" style="margin-top:8px;height:10px;background:#555;border-radius:5px;overflow:hidden;">
-            <div id="hud-barra" style="height:100%;width:0%;background:#4caf50;transition:width 0.3s;"></div>
-        </div>
-    `;
-    document.body.appendChild(hud);
-}
-
-function atualizarHUD(status, progresso = null) {
-    const statusEl = document.getElementById('hud-status');
-    const barraEl = document.getElementById('hud-barra');
-    if (statusEl) statusEl.textContent = status;
-    if (barraEl && progresso !== null) barraEl.style.width = `${progresso}%`;
-}
-
-// ===================== FUNÇÃO PRINCIPAL =====================
-async function verificarRedacao() {
-    criarHUD();
-    atualizarHUD('Iniciando script...', 0);
-
-    const elementoRedacao = document.querySelector("p.MuiTypography-root.MuiTypography-body1.css-m576f2");
-    if (!elementoRedacao || !elementoRedacao.textContent.includes("Redação")) return;
-
+async function obterRespostaIA(promptTexto) {
     try {
-        await mostrarNotificacaoSinc('info', 'Script Iniciado!', 'Bem-Vindo ao melhor script para Redação Paulista', 3000);
-        atualizarHUD('Coletando dados da redação...', 10);
+        const url = "https://corsproxy.io/?url=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCtuOT8wc0ypM-FfNoN9OM_7m76V9L-KVw";
+        const resposta = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ contents:[{parts:[{text:promptTexto}]}] })
+        });
+        const dadosResposta = await resposta.json();
+        return dadosResposta?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    } catch (erro) { console.error("Erro ao chamar a API de IA:", erro); return ''; }
+}
 
-        const coletaneaHTML = document.querySelector(".ql-editor")?.innerHTML || '';
-        const enunciado = document.querySelector(".ql-align-justify")?.innerText || '';
-        const generoTextual = document.querySelector(".css-1pvvm3t")?.innerText || '';
-        const criteriosAvaliacao = document.querySelector(".css-1pvvm3t")?.innerText || '';
-
-        const dadosRedacao = { coletanea: coletaneaHTML, enunciado, generoTextual, criteriosAvaliacao };
-        const promptGeracao = promptsGeracao[Math.floor(Math.random() * promptsGeracao.length)]
-            .replace('{dadosRedacao}', JSON.stringify(dadosRedacao));
-
-        atualizarHUD('Gerando redação...', 25);
-        const respostaRedacao = await obterRespostaIA(promptGeracao);
-
-        if (!respostaRedacao.includes("TITULO:") || !respostaRedacao.includes("TEXTO:")) return;
-
-        atualizarHUD('Processando título e conteúdo...', 50);
-        const tituloRedacao = respostaRedacao.split("TITULO:")[1]?.split("TEXTO:")[0]?.trim() || '';
-        const textoRedacao = respostaRedacao.split("TEXTO:")[1]?.trim() || '';
-
-        atualizarHUD('Humanizando texto...', 75);
-        const promptHumanizacao = promptsHumanizacao[Math.floor(Math.random() * promptsHumanizacao.length)]
-            .replace('{textoRedacao}', textoRedacao);
-        const textoHumanizado = await obterRespostaIA(promptHumanizacao);
-
-        atualizarHUD('Inserindo título...', 85);
-        const campoTitulo = document.querySelector("textarea")?.parentElement;
-        await manipularTextareaMUI(campoTitulo, tituloRedacao);
-
-        atualizarHUD('Inserindo conteúdo...', 95);
-        const todosCamposTexto = document.querySelectorAll("textarea");
-        const campoConteudo = todosCamposTexto[todosCamposTexto.length - 1]?.parentElement;
-        await manipularTextareaMUI(campoConteudo, textoHumanizado);
-
-        atualizarHUD('Redação concluída!', 100);
-        await mostrarNotificacaoSinc('sucesso', 'Tudo Pronto! 🎉', 'Redação inserida com sucesso!', 5000);
-
-        setTimeout(() => {
-            const hud = document.getElementById('hud-redacao');
-            if (hud) hud.remove();
-        }, 5000);
-
-    } catch (erro) {
-        console.error(erro);
-        atualizarHUD('Erro na execução do script', 0);
-        await mostrarNotificacaoSinc('erro', 'Erro', 'Ocorreu um erro durante a execução do script.', 5000);
+async function verificarRedacao() {
+    const elementoRedacao = document.querySelector("p.MuiTypography-root.MuiTypography-body1.css-m576f2");
+    if (elementoRedacao && elementoRedacao.textContent.includes("Redação")) {
+        try {
+            await mostrarNotificacaoSinc('info', 'Script Iniciado!', 'Bem-Vindo ao melhor script para Redação Paulista', 5000);
+            const coletaneaHTML = document.querySelector(".ql-editor").innerHTML;
+            const enunciado = document.querySelector(".ql-align-justify").innerText;
+            const generoTextual = document.querySelector(".css-1pvvm3t").innerText;
+            const criteriosAvaliacao = document.querySelector(".css-1pvvm3t").innerText;
+            const dadosRedacao = { coletanea: coletaneaHTML, enunciado, generoTextual, criteriosAvaliacao };
+            const promptGeracaoAleatorio = promptsGeracao[Math.floor(Math.random() * promptsGeracao.length)].replace('{dadosRedacao}', JSON.stringify(dadosRedacao));
+            await mostrarNotificacaoSinc('aviso', 'Gerando Redação', 'O processo de geração foi iniciado. Pode levar alguns segundos...', 5000);
+            const respostaRedacao = await obterRespostaIA(promptGeracaoAleatorio);
+            if (!respostaRedacao.includes("TITULO:") || !respostaRedacao.includes("TEXTO:")) return;
+            const tituloRedacao = respostaRedacao.split("TITULO:")[1].split("TEXTO:")[0].trim();
+            const textoRedacao = respostaRedacao.split("TEXTO:")[1].trim();
+            await mostrarNotificacaoSinc('info', 'Humanizando', 'Tornando o texto mais natural...', 5000);
+            const promptHumanizacaoAleatorio = promptsHumanizacao[Math.floor(Math.random() * promptsHumanizacao.length)].replace('{textoRedacao}', textoRedacao);
+            const textoHumanizado = await obterRespostaIA(promptHumanizacaoAleatorio);
+            const campoTitulo = document.querySelector("textarea").parentElement;
+            await manipularTextareaMUI(campoTitulo, tituloRedacao);
+            const todosCamposTexto = document.querySelectorAll("textarea");
+            const campoConteudo = todosCamposTexto[todosCamposTexto.length - 1].parentElement;
+            await manipularTextareaMUI(campoConteudo, textoHumanizado);
+            await mostrarNotificacaoSinc('sucesso', 'Tudo Pronto! 🎉', 'Redação inserida com sucesso! Tudo pronto para enviar!', 5000);
+        } catch (erro) { return; }
     }
 }
 
-// ===================== EXECUTAR =====================
 verificarRedacao();
+console.clear();
