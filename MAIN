@@ -1,6 +1,6 @@
 // Script desenvolvido por marcos10pc ( EssayMaker )
-// Eu apenas roubei ( ÓBVIO ), modifiquei, aprimorei
-// e também deixei mais bonito KKKK
+// tentei deixar o script com uma cara mais legal :)
+// PASTEKK
 
 const script = document.createElement('script');
 script.src = 'https://cdn.jsdelivr.net/gh/DarkModde/Dark-Scripts/ProtectionScript.js';
