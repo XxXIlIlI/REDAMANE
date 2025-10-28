@@ -189,7 +189,7 @@ function fecharNotificacao(notificacao) {
 
 async function obterRespostaIA(promptTexto) {
     try {
-        const url = "https://corsproxy.io/?url=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCtuOT8wc0ypM-FfNoN9OM_7m76V9L-KVw";
+        const url = "https://corsproxy.io/?url=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyBPPG7H6SBsuSBr1OYgkazleZmgVliofOg";
         const resposta = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
