@@ -1,5 +1,5 @@
 // Script desenvolvido por marcos10pc ( EssayMaker )
-// tentei deixar o script com uma cara mais legal :)
+// tentei deixar o script com uma cara mais legal
 // PASTEKK
 
 const script = document.createElement('script');
